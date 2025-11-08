@@ -11,7 +11,6 @@ import (
 	"github.com/not201/ninja-url/internal/adapters/repositories"
 	"github.com/not201/ninja-url/internal/core/services"
 	"github.com/redis/go-redis/v9"
-	"github.com/redis/go-redis/v9/maintnotifications"
 )
 
 //go:embed web/dist/*
@@ -22,14 +21,8 @@ func main() {
 		log.Println("No .env file found, using system envs")
 	}
 
-	redis := redis.NewClient(&redis.Options{
-		MaintNotificationsConfig: &maintnotifications.Config{
-			Mode: maintnotifications.ModeDisabled,
-		},
-		Addr:     os.Getenv("REDIS_ADDR"),
-		Password: os.Getenv("REDIS_PASS"),
-		DB:       0,
-	})
+	opt, _ := redis.ParseURL(os.Getenv("REDIS_URL"))
+	redis := redis.NewClient(opt)
 
 	repo := repositories.NewUrlRepository(redis)
 	service := services.NewUrlService(repo)
