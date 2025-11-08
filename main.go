@@ -30,5 +30,6 @@ func main() {
 
 	r := httpAdapter.SetupRoutes(handler)
 
-	http.ListenAndServe(os.Getenv("SERVER_PORT"), r)
+	port := os.Getenv("PORT")
+	http.ListenAndServe(":"+port, r)
 }
